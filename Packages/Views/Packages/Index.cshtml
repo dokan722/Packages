@@ -1,0 +1,90 @@
+﻿@model Packages.Other.PaginatedList<Packages.Models.Package>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Show only:
+            Open <input type="checkbox" name="Filter", value="@PackageState.Open"/>
+            Closed <input type="checkbox" name="Filter", value="@PackageState.Closed"/>
+            <input type="submit" value="Apply" class="btn btn-primary" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Package Name
+        </th>
+        <th>
+            Created
+        </th>
+        <th>
+            State
+        </th>
+        <th>
+            Closed
+        </th>
+        <th>
+            City Destination
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PackageName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.State)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CloseDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CityDestination)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PackageID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PackageID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PackageID">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-filter="@ViewData["Filter"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-filter="@ViewData["Filter"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

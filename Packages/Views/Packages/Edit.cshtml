@@ -1,0 +1,98 @@
+﻿@using Packages.Controllers
+@model Packages.Models.Package
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Package</h4>
+<hr />
+<div class="row">
+    @if (Model.State == PackageState.Open)
+    {
+        <form asp-controller="Packages">
+            <button class = "btn btn-primary" type="submit" asp-action="ClosePackage" asp-route-id="@Model.PackageID">Close</button>
+        </form>
+        <div class="col-md-4">
+            <form asp-action="Edit" asp-route-id="@Model.PackageID">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="PackageID"/>
+                <div class="form-group">
+                    <label asp-for="PackageName" class="control-label"></label>
+                    <input asp-for="PackageName" class="form-control"/>
+                    <span asp-validation-for="PackageName" class="text-danger"></span>
+                </div>
+                <input type="hidden" asp-for="CreateDate"/>
+                <input type="hidden" asp-for="State"/>
+                <input type="hidden" asp-for="CloseDate"/>
+                <div class="form-group">
+                    <label asp-for="CityDestination" class="control-label"></label>
+                    <input asp-for="CityDestination" class="form-control"/>
+                    <span asp-validation-for="CityDestination" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Parcels" class="control-label"></label>
+                    <dd class="col-sm-10">
+                        <table id="parcelsTable">
+                            <tr>
+                                <th>Parcel Name</th>
+                                <th>Delivery Address</th>
+                                <th>Created</th>
+                                <th>Weight</th>
+                            </tr>
+                            @if (Model.Parcels != null)
+                            {
+                                @for (int i = 0; i < Model.Parcels.Count; ++i)
+                                {
+                                    <tr class="parcelRow">
+                                        <td>
+                                            @Html.EditorFor(modelItem => Model.Parcels[i].ParcelName)
+                                        </td>
+                                        <td>
+                                            @Html.EditorFor(modelItem => Model.Parcels[i].DeliveryAddress)
+                                        </td>
+                                        <td>
+                                            @Html.EditorFor(modelItem => Model.Parcels[i].CreateDate)
+                                        </td>
+                                        <td>
+                                            @Html.EditorFor(modelItem => Model.Parcels[i].Weight)
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary" asp-action="RemoveParcel" asp-route-id="@i">delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                        <button class="btn btn-primary" asp-action="AddParcel">Add parcel</button>
+                    </dd>
+                    <span asp-validation-for="Parcels" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary"/>
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div>
+            You cant edit closed package. <br/>
+            Open it, if you want: <br/>
+            <form asp-controller="Packages">
+                <button class = "btn btn-primary" type="submit" asp-action="OpenPackage" asp-route-id="@Model.PackageID">Open</button>
+            </form>
+        </div>
+    }
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

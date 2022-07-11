@@ -1,0 +1,78 @@
+﻿@model Packages.Models.Package
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Package</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PackageName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PackageName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreateDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.State)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.State)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CloseDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CloseDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CityDestination)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CityDestination)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Parcels)
+        </dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>Parcel Name</th>
+                    <th>Delivery Address</th>
+                    <th>Created</th>
+                    <th>Weight</th>
+                </tr>
+                @foreach (var item in Model.Parcels)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ParcelName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DeliveryAddress)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreateDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Weight)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.PackageID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
