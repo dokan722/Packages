@@ -58,64 +58,38 @@ namespace Packages.Controllers
             return View(package);
         }
 
-        // GET: Packages/Create
-        public IActionResult Create()
+        public async Task<IActionResult> CreateEdit(int? id)
         {
-            Package package = new Package{PackageName = "Nowa paczka", CreateDate = DateTime.Today,
-                State = PackageState.Open, CityDestination = "Kraków", Parcels = new List<Parcel>()};
-            return View(package);
-        }
-
-        // POST: Packages/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PackageID,PackageName,CreateDate,State,CloseDate,CityDestination")] Package package)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(package);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            //ten sam co edit
-            return View(package);
-        }
-
-        // GET: Packages/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
+            Package? package;
             if (id == null || _context.Packages == null)
             {
-                return NotFound();
+                package = new Package
+                {
+                    PackageName = "Nowa paczka",
+                    CreateDate = DateTime.Today,
+                    State = PackageState.Open,
+                    CityDestination = "Kraków",
+                    Parcels = new List<Parcel>()
+                };
             }
-
-            var package = await _context.Packages
-                .Include(p => p.Parcels)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.PackageID == id);
-            if (package == null)
+            else
             {
-                return NotFound();
+                package = await _context.Packages
+                    .Include(p => p.Parcels)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.PackageID == id);
             }
             return View(package);
         }
 
-        // POST: Packages/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Package package)
+        public async Task<IActionResult> CreateEdit(int id, Package package)
         {
             if (id != package.PackageID)
             {
                 return NotFound();
             }
-
-            
-
 
             if (ModelState.IsValid)
             {
@@ -124,6 +98,10 @@ namespace Packages.Controllers
                     var allParcels = _context.Parcels;
                     var parcels = allParcels.Where(p => p.PackageID == id);
                     _context.Parcels.RemoveRange(parcels);
+                    if (package.State == PackageState.Closed)
+                    {
+                        package.CloseDate = DateTime.Today;
+                    }
                     _context.Update(package);
                     await _context.SaveChangesAsync();
                 }
@@ -180,12 +158,25 @@ namespace Packages.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> NewParcelView(int packageID)
+        {
+            var parcel = new Parcel
+            {
+                ParcelName = "Nowa przesyłka",
+                CreateDate = DateTime.Today,
+                DeliveryAddress = "Kraków",
+                PackageID = packageID,
+                Weight = 1
+            };
+            return PartialView("_Parcel", parcel);
+        }
+
         private bool PackageExists(int id)
         {
             return (_context.Packages?.Any(e => e.PackageID == id)).GetValueOrDefault();
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public async Task<IActionResult> AddParcel(Package package)
         { ;
             if (package.Parcels == null)
@@ -198,7 +189,7 @@ namespace Packages.Controllers
                 PackageID = package.PackageID,
                 Weight = 1
             });
-            return View("Edit", package);
+            return View("CreateEdit", package);
         }
 
         [HttpPost]
@@ -206,8 +197,8 @@ namespace Packages.Controllers
         {
             package.Parcels.RemoveAt(id);
             ModelState.Clear();
-            return View("Edit", package);
-        }
+            return View("CreateEdit", package);
+        }*/
 
         [HttpPost]
         public async Task<IActionResult> OpenPackage(int id)
@@ -217,18 +208,7 @@ namespace Packages.Controllers
             package.CloseDate = null;
             _context.Update(package);
             _context.SaveChanges();
-            return RedirectToAction("Edit", new { id = id});
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ClosePackage(int id)
-        {
-            var package = await _context.Packages.FirstOrDefaultAsync(m => m.PackageID == id);
-            package.State = PackageState.Closed;
-            package.CloseDate = DateTime.Today;
-            _context.Update(package);
-            _context.SaveChanges();
-            return RedirectToAction("Details", new {id = id});
+            return RedirectToAction("CreateEdit", new { id = id});
         }
     }
 }

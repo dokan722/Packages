@@ -7,17 +7,17 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="CreateEdit">Create New</a>
 </p>
 
 <form asp-action="Index" method="get">
     <div class="form-actions no-color">
         <p>
             Show only:
-            Open <input type="checkbox" name="Filter", value="@PackageState.Open"/>
-            Closed <input type="checkbox" name="Filter", value="@PackageState.Closed"/>
-            <input type="submit" value="Apply" class="btn btn-primary" /> |
-            <a asp-action="Index">Back to Full List</a>
+            <select name="Filter" class="form-control" asp-items="Html.GetEnumSelectList<PackageState>()">
+                <option>All</option>
+            </select>
+            <input type="submit" value="Apply" class="btn btn-primary" />
         </p>
     </div>
 </form>
@@ -62,7 +62,7 @@
                 @Html.DisplayFor(modelItem => item.CityDestination)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.PackageID">Edit</a> |
+                <a asp-action="CreateEdit" asp-route-id="@item.PackageID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.PackageID">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.PackageID">Delete</a>
             </td>
