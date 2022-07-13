@@ -1,0 +1,23 @@
+﻿@using HtmlHelpers.BeginCollectionItemCore;
+@model Packages.Models.Parcel
+
+<tr class="parcelRow">
+    @using (Html.BeginCollectionItem("Parcels"))
+    {
+        <td>
+            @Html.EditorFor(m => m.ParcelName)
+        </td>
+        <td>
+            @Html.EditorFor(m => m.DeliveryAddress)
+        </td>
+        <td>
+            @Html.EditorFor(m => m.CreateDate)
+        </td>
+        <td>
+            @Html.EditorFor(m => m.Weight)
+        </td>
+        <td>
+            <button type="button" class="btn btn-primary" id="deleteBtn">delete</button>
+        </td>
+    }
+</tr>
